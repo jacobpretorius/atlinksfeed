@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
-  <title>URL Feed</title>
+  <title>Bluesky Links - Live Stream</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -85,7 +85,7 @@
 </head>
 
 <body>
-  <h1>Bluesky Links - Live Feed</h1>
+  <h1>Bluesky Links - Live Stream</h1>
   <div class="description">
     <div class="status"
          id="status">[connecting]</div>
@@ -127,10 +127,16 @@
       };
 
       ws.onmessage = (event) => {
-        const url = event.data;
+        const data = JSON.parse(event.data);
         const li = document.createElement('li');
         li.className = 'url-item';
-        li.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.innerHTML = `
+          <a href="${data.link}" target="_blank" style="flex: 1">${data.link}</a>
+          <a href="${data.post}" target="_blank" style="margin-left: 10px; color: #666; font-size: 0.9em;">see post ↗</a>
+        `;
         urlList.insertBefore(li, urlList.firstChild);
 
         // Remove after 10 seconds minute

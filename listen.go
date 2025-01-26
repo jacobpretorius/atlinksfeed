@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -214,9 +215,12 @@ func (c *WebSocketClient) Listen(ctx context.Context) error {
 
 			var uri = ExtractUri(post)
 			if uri != "" {
-				//log.Printf("URI: %s", uri)
-				// Broadcast URI to all connected clients
-				c.hub.broadcast <- uri
+				// Create JSON message with both URIs
+				message := fmt.Sprintf(`{"link":"%s","post":"https://bsky.app/profile/%s/post/%s"}`,
+					uri,
+					post.Did,
+					post.Commit.Rkey)
+				c.hub.broadcast <- message
 			}
 		}
 	}
