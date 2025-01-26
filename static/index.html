@@ -218,6 +218,16 @@
     .fade-out {
       animation: fadeOut 0.3s ease-out forwards;
     }
+
+    .connection-error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+      animation: slideIn 0.3s ease-out;
+    }
   </style>
 </head>
 
@@ -262,6 +272,10 @@
   </div>
   <div class="main-content">
     <h1>New Bluesky Posts with Links</h1>
+    <div id="connectionError"
+         class="connection-error">
+      Connection lost. Attempting to reconnect...
+    </div>
     <div class="controls">
       <button id="pauseBtn"
               class="pause-btn">Pause</button>
@@ -322,9 +336,11 @@
 
         ws.onopen = () => {
           reconnectAttempts = 0;
+          document.getElementById('connectionError').style.display = 'none';
         };
 
         ws.onclose = () => {
+          document.getElementById('connectionError').style.display = 'block';
           if (reconnectAttempts < maxReconnectAttempts) {
             setTimeout(() => {
               reconnectAttempts++;
@@ -334,6 +350,7 @@
         };
 
         ws.onerror = (error) => {
+          document.getElementById('connectionError').style.display = 'block';
           console.error('WebSocket error:', error);
         };
 
