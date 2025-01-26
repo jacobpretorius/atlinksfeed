@@ -3,13 +3,66 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true // Allow all origins for demo
+	},
+}
+
+type Hub struct {
+	clients    map[*websocket.Conn]bool
+	broadcast  chan string
+	register   chan *websocket.Conn
+	unregister chan *websocket.Conn
+	mutex      sync.Mutex
+}
+
+func newHub() *Hub {
+	return &Hub{
+		clients:    make(map[*websocket.Conn]bool),
+		broadcast:  make(chan string),
+		register:   make(chan *websocket.Conn),
+		unregister: make(chan *websocket.Conn),
+	}
+}
+
+func (h *Hub) run() {
+	for {
+		select {
+		case client := <-h.register:
+			h.mutex.Lock()
+			h.clients[client] = true
+			h.mutex.Unlock()
+		case client := <-h.unregister:
+			h.mutex.Lock()
+			if _, ok := h.clients[client]; ok {
+				delete(h.clients, client)
+				client.Close()
+			}
+			h.mutex.Unlock()
+		case message := <-h.broadcast:
+			h.mutex.Lock()
+			for client := range h.clients {
+				err := client.WriteMessage(websocket.TextMessage, []byte(message))
+				if err != nil {
+					client.Close()
+					delete(h.clients, client)
+				}
+			}
+			h.mutex.Unlock()
+		}
+	}
+}
 
 type ATPost struct {
 	Did    string `json:"did"`
@@ -55,13 +108,15 @@ type WebSocketClient struct {
 	conn       *websocket.Conn
 	done       chan struct{}
 	maxRetries int
+	hub        *Hub
 }
 
-func NewWebSocketClient(url string) *WebSocketClient {
+func NewWebSocketClient(url string, hub *Hub) *WebSocketClient {
 	return &WebSocketClient{
 		url:        url,
 		done:       make(chan struct{}),
 		maxRetries: 5,
+		hub:        hub,
 	}
 }
 
@@ -159,17 +214,44 @@ func (c *WebSocketClient) Listen(ctx context.Context) error {
 
 			var uri = ExtractUri(post)
 			if uri != "" {
-				log.Printf("URI: %s", uri)
+				//log.Printf("URI: %s", uri)
+				// Broadcast URI to all connected clients
+				c.hub.broadcast <- uri
 			}
 		}
-
 	}
 }
 
 func main() {
-	log.Println("Starting feed listener... (Press Ctrl+C to stop)")
+	log.Println("Starting feed listener and websocket server... (Press Ctrl+C to stop)")
 
-	client := NewWebSocketClient("wss://jetstream2.us-west.bsky.network/subscribe?wantedCollections=app.bsky.feed.post")
+	// Create and start the hub
+	hub := newHub()
+	go hub.run()
+
+	// Setup websocket endpoint
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Printf("Websocket upgrade error: %v", err)
+			return
+		}
+		hub.register <- conn
+	})
+
+	// Serve static files
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", fs)
+
+	// Start HTTP server
+	go func() {
+		log.Println("Starting websocket server on :8080")
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Printf("HTTP server error: %v", err)
+		}
+	}()
+
+	client := NewWebSocketClient("wss://jetstream2.us-west.bsky.network/subscribe?wantedCollections=app.bsky.feed.post", hub)
 
 	// Setup context with cancellation on interrupt
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
