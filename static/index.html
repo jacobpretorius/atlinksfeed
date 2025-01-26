@@ -233,7 +233,6 @@
           data-domain="bluesky-link-stream.jacob.earth"
           crossorigin='anonymous'
           src="https://ft.ohonesix.com/js/script.js"></script>
-
 </head>
 
 <body>
@@ -356,7 +355,6 @@
 
         ws.onerror = (error) => {
           document.getElementById('connectionError').style.display = 'block';
-          console.error('WebSocket error:', error);
         };
 
         ws.onmessage = (event) => {
