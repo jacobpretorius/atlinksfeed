@@ -9,10 +9,114 @@
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 30px;
+      background: white;
+      position: sticky;
+      top: 50%;
+      transform: translateY(-50%);
+      height: auto;
+      padding: 10px 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      height: fit-content;
+    }
+
+    .sidebar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .sidebar-item .icon {
+      width: 33px;
+      height: 33px;
+      border-radius: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-item:hover .icon {
+      transform: scale(1.1);
+    }
+
+    .sidebar-item .x {
+      background: #000000;
+    }
+
+    .sidebar-item .yt {
+      background: #FF0000;
+    }
+
+    .sidebar-item .bs {
+      background: #0085FF;
+    }
+
+    .sidebar-item .tt {
+      background: #000000;
+    }
+
+    .sidebar-item .tw {
+      background: #9146FF;
+    }
+
+    .sidebar-item .rd {
+      background: #FF4500;
+    }
+
+    .sidebar-item .count {
+      font-size: 11px;
+      font-weight: 500;
+      color: #666;
+      min-width: 20px;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    @keyframes countBump {
+      0% {
+        color: green;
+        transform: scale(1);
+      }
+
+      50% {
+        color: rgb(11, 209, 11);
+        transform: scale(1.4);
+      }
+
+      100% {
+        color: #666;
+        ;
+        transform: scale(1);
+      }
+    }
+
+    .count-bump {
+      animation: countBump 0.3s ease-out;
+    }
+
+    .main-content {
+      flex: 1;
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background: #f5f5f5;
     }
 
     .description {
@@ -124,201 +228,293 @@
 </head>
 
 <body>
-  <h1>Bluesky Links - Live Stream</h1>
-  <div class="controls">
-    <button id="pauseBtn"
-            class="pause-btn">Pause</button>
-    <div class="speed-control">
-      <label for="speedSlider">Speed:</label>
-      <select id="speedSlider">
-        <option value="1">Full</option>
-        <option value="2">Slower</option>
-        <option value="3">Slowest</option>
-      </select>
-      <span id="queueSize"
-            class="queue-size">(in queue: 0)</span>
+  <div class="sidebar">
+    <div class="sidebar-item">
+      <div class="icon yt"
+           title="YouTube">YT</div>
+      <span class="count"
+            id="youtube-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="icon bs"
+           title="Bluesky">Bsky</div>
+      <span class="count"
+            id="bsky-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="icon tw"
+           title="Twitch">TW</div>
+      <span class="count"
+            id="twitch-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="icon rd"
+           title="Reddit">RD</div>
+      <span class="count"
+            id="reddit-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="icon x"
+           title="X (Twitter)">X</div>
+      <span class="count"
+            id="x-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <div class="icon tt"
+           title="TikTok">TT</div>
+      <span class="count"
+            id="tiktok-count">0</span>
     </div>
   </div>
-  <div class="description">
-    <div class="status"
-         id="status">[connecting]</div>
-    <div>made by <a href="https://bsky.app/profile/jacob.earth"
-         target="_blank"
-         title="Follow me on Bsky">@jacob.earth</a></div>
-    <div><a title="Source on Github"
-         href="https://github.com/jacobpretorius/atlinksfeed"
-         target="_blank">
-        <svg aria-hidden="true"
-             height="22"
-             viewBox="0 0 24 24"
-             version="1.1"
-             width="22"
-             data-view-component="true">
-          <path
-                d="M12.5.75C6.146.75 1 5.896 1 12.25c0 5.089 3.292 9.387 7.863 10.91.575.101.79-.244.79-.546 0-.273-.014-1.178-.014-2.142-2.889.532-3.636-.704-3.866-1.35-.13-.331-.69-1.352-1.18-1.625-.402-.216-.977-.748-.014-.762.906-.014 1.553.834 1.769 1.179 1.035 1.74 2.688 1.25 3.349.948.1-.747.402-1.25.733-1.538-2.559-.287-5.232-1.279-5.232-5.678 0-1.25.445-2.285 1.178-3.09-.115-.288-.517-1.467.115-3.048 0 0 .963-.302 3.163 1.179.92-.259 1.897-.388 2.875-.388.977 0 1.955.13 2.875.388 2.2-1.495 3.162-1.179 3.162-1.179.633 1.581.23 2.76.115 3.048.733.805 1.179 1.825 1.179 3.09 0 4.413-2.688 5.39-5.247 5.678.417.36.776 1.05.776 2.128 0 1.538-.014 2.774-.014 3.162 0 .302.216.662.79.547C20.709 21.637 24 17.324 24 12.25 24 5.896 18.854.75 12.5.75Z">
-          </path>
-        </svg>
-      </a></div>
-  </div>
-  <div class="url-container">
-    <ul id="urlList"></ul>
-  </div>
+  <div class="main-content">
+    <h1>Bluesky Links - Live Stream</h1>
+    <div class="controls">
+      <button id="pauseBtn"
+              class="pause-btn">Pause</button>
+      <div class="speed-control">
+        <label for="speedSlider">Speed:</label>
+        <select id="speedSlider">
+          <option value="1">Full</option>
+          <option value="2">Slower</option>
+          <option value="3">Slowest</option>
+        </select>
+        <span id="queueSize"
+              class="queue-size">(in queue: 0)</span>
+      </div>
+    </div>
+    <div class="description">
+      <div class="status"
+           id="status">[connecting]</div>
+      <div>made by <a href="https://bsky.app/profile/jacob.earth"
+           target="_blank"
+           title="Follow me on Bsky">@jacob.earth</a></div>
+      <div><a title="Source on Github"
+           href="https://github.com/jacobpretorius/atlinksfeed"
+           target="_blank">
+          <svg aria-hidden="true"
+               height="22"
+               viewBox="0 0 24 24"
+               version="1.1"
+               width="22"
+               data-view-component="true">
+            <path
+                  d="M12.5.75C6.146.75 1 5.896 1 12.25c0 5.089 3.292 9.387 7.863 10.91.575.101.79-.244.79-.546 0-.273-.014-1.178-.014-2.142-2.889.532-3.636-.704-3.866-1.35-.13-.331-.69-1.352-1.18-1.625-.402-.216-.977-.748-.014-.762.906-.014 1.553.834 1.769 1.179 1.035 1.74 2.688 1.25 3.349.948.1-.747.402-1.25.733-1.538-2.559-.287-5.232-1.279-5.232-5.678 0-1.25.445-2.285 1.178-3.09-.115-.288-.517-1.467.115-3.048 0 0 .963-.302 3.163 1.179.92-.259 1.897-.388 2.875-.388.977 0 1.955.13 2.875.388 2.2-1.495 3.162-1.179 3.162-1.179.633 1.581.23 2.76.115 3.048.733.805 1.179 1.825 1.179 3.09 0 4.413-2.688 5.39-5.247 5.678.417.36.776 1.05.776 2.128 0 1.538-.014 2.774-.014 3.162 0 .302.216.662.79.547C20.709 21.637 24 17.324 24 12.25 24 5.896 18.854.75 12.5.75Z">
+            </path>
+          </svg>
+        </a></div>
+    </div>
+    <div class="url-container">
+      <ul id="urlList"></ul>
+    </div>
 
-  <script>
-    const urlList = document.getElementById('urlList');
-    const status = document.getElementById('status');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const speedSlider = document.getElementById('speedSlider');
-    const queueSize = document.getElementById('queueSize');
-    let ws = null;
-    let isPaused = false;
-    let messageQueue = [];
-    let processingInterval = null;
-    let fadeTimeouts = new Set(); // Store fade timeouts
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 5;
-    const reconnectDelay = 1000;
-    const MAX_QUEUE_SIZE = 100;
+    <script>
+      const urlList = document.getElementById('urlList');
+      const status = document.getElementById('status');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const speedSlider = document.getElementById('speedSlider');
+      const queueSize = document.getElementById('queueSize');
+      let ws = null;
+      let isPaused = false;
+      let messageQueue = [];
+      let processingInterval = null;
+      let fadeTimeouts = new Set(); // Store fade timeouts
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 5;
+      const reconnectDelay = 1000;
+      const MAX_QUEUE_SIZE = 100;
 
-    function connect() {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      function connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
 
-      ws = new WebSocket(wsUrl);
+        ws = new WebSocket(wsUrl);
 
-      ws.onopen = () => {
-        status.textContent = '[connected]';
-        reconnectAttempts = 0;
-      };
+        ws.onopen = () => {
+          status.textContent = '[connected]';
+          reconnectAttempts = 0;
+        };
 
-      ws.onclose = () => {
-        status.textContent = '[disconnected]';
-        if (reconnectAttempts < maxReconnectAttempts) {
-          setTimeout(() => {
-            reconnectAttempts++;
-            connect();
-          }, reconnectDelay * Math.pow(2, reconnectAttempts));
+        ws.onclose = () => {
+          status.textContent = '[disconnected]';
+          if (reconnectAttempts < maxReconnectAttempts) {
+            setTimeout(() => {
+              reconnectAttempts++;
+              connect();
+            }, reconnectDelay * Math.pow(2, reconnectAttempts));
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          messageQueue.push(data);
+          if (messageQueue.length > MAX_QUEUE_SIZE) {
+            messageQueue.shift(); // Remove oldest item if queue is full
+          }
+          updateQueueSize();
+        };
+      }
+
+      function getDisplayTime() {
+        const speed = parseInt(speedSlider.value);
+        switch (speed) {
+          case 1: return 5000;  // 5 seconds
+          case 2: return 10000; // 10 seconds
+          case 3: return 15000; // 15 seconds
+          default: return 5000;
         }
-      };
+      }
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        messageQueue.push(data);
-        if (messageQueue.length > MAX_QUEUE_SIZE) {
-          messageQueue.shift(); // Remove oldest item if queue is full
+      function getProcessingInterval() {
+        const speed = parseInt(speedSlider.value);
+        switch (speed) {
+          case 1: return 0;    // Immediate
+          case 2: return 500;  // 0.5 second delay
+          case 3: return 1000; // 1 second delay
+          default: return 0;
         }
+      }
+
+      function updateQueueSize() {
+        queueSize.textContent = `(in queue: ${messageQueue.length})`;
+      }
+
+      function processQueue() {
+        if (isPaused || messageQueue.length === 0) return;
+
+        const data = messageQueue.shift();
         updateQueueSize();
-      };
-    }
 
-    function getDisplayTime() {
-      const speed = parseInt(speedSlider.value);
-      switch (speed) {
-        case 1: return 5000;  // 5 seconds
-        case 2: return 10000; // 10 seconds
-        case 3: return 15000; // 15 seconds
-        default: return 5000;
-      }
-    }
+        // Update link count
+        updateCount(data.link);
 
-    function getProcessingInterval() {
-      const speed = parseInt(speedSlider.value);
-      switch (speed) {
-        case 1: return 0;    // Immediate
-        case 2: return 500;  // 0.5 second delay
-        case 3: return 1000; // 1 second delay
-        default: return 0;
-      }
-    }
-
-    function updateQueueSize() {
-      queueSize.textContent = `(in queue: ${messageQueue.length})`;
-    }
-
-    function processQueue() {
-      if (isPaused || messageQueue.length === 0) return;
-
-      const data = messageQueue.shift();
-      updateQueueSize();
-
-      const li = document.createElement('li');
-      li.className = 'url-item';
-      li.style.display = 'flex';
-      li.style.justifyContent = 'space-between';
-      li.style.alignItems = 'center';
-      li.innerHTML = `
+        const li = document.createElement('li');
+        li.className = 'url-item';
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.innerHTML = `
         <a href="${data.link}" target="_blank" style="flex: 1">${data.link}</a>
         <a href="${data.post}" target="_blank" style="margin-left: 10px; color: #666; font-size: 0.9em;">see post ↗</a>
       `;
-      urlList.insertBefore(li, urlList.firstChild);
+        urlList.insertBefore(li, urlList.firstChild);
 
-      if (!isPaused) {
-        const fadeTimeout = setTimeout(() => {
-          if (!isPaused) {
-            li.classList.add('fade-out');
-            setTimeout(() => {
-              if (!isPaused && urlList.contains(li)) {
-                urlList.removeChild(li);
-              }
-            }, 300);
-          }
-        }, getDisplayTime());
-        fadeTimeouts.add(fadeTimeout);
-      }
-    }
-
-    function startProcessingQueue() {
-      if (processingInterval) clearInterval(processingInterval);
-      const interval = getProcessingInterval();
-      processingInterval = setInterval(processQueue, interval || 100);
-    }
-
-    pauseBtn.addEventListener('click', () => {
-      isPaused = !isPaused;
-      pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
-      pauseBtn.classList.toggle('paused', isPaused);
-
-      if (isPaused) {
-        // Clear all fade timeouts when pausing
-        fadeTimeouts.forEach(timeout => clearTimeout(timeout));
-        fadeTimeouts.clear();
-      } else {
-        // When unpausing, start fade timeouts for all visible items
-        const items = urlList.getElementsByClassName('url-item');
-        Array.from(items).forEach(item => {
+        if (!isPaused) {
           const fadeTimeout = setTimeout(() => {
             if (!isPaused) {
-              item.classList.add('fade-out');
+              li.classList.add('fade-out');
               setTimeout(() => {
-                if (!isPaused && urlList.contains(item)) {
-                  urlList.removeChild(item);
+                if (!isPaused && urlList.contains(li)) {
+                  urlList.removeChild(li);
                 }
               }, 300);
             }
           }, getDisplayTime());
           fadeTimeouts.add(fadeTimeout);
-        });
+        }
       }
-    });
 
-    speedSlider.addEventListener('change', () => {
+      function startProcessingQueue() {
+        if (processingInterval) clearInterval(processingInterval);
+        const interval = getProcessingInterval();
+        processingInterval = setInterval(processQueue, interval || 100);
+      }
+
+      pauseBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+        pauseBtn.classList.toggle('paused', isPaused);
+
+        if (isPaused) {
+          // Clear all fade timeouts when pausing
+          fadeTimeouts.forEach(timeout => clearTimeout(timeout));
+          fadeTimeouts.clear();
+        } else {
+          // When unpausing, start fade timeouts for all visible items
+          const items = urlList.getElementsByClassName('url-item');
+          Array.from(items).forEach(item => {
+            const fadeTimeout = setTimeout(() => {
+              if (!isPaused) {
+                item.classList.add('fade-out');
+                setTimeout(() => {
+                  if (!isPaused && urlList.contains(item)) {
+                    urlList.removeChild(item);
+                  }
+                }, 300);
+              }
+            }, getDisplayTime());
+            fadeTimeouts.add(fadeTimeout);
+          });
+        }
+      });
+
+      speedSlider.addEventListener('change', () => {
+        startProcessingQueue();
+      });
+
+      // Link counting functionality
+      const linkCounts = {
+        x: 0,
+        youtube: 0,
+        bsky: 0,
+        tiktok: 0,
+        twitch: 0,
+        reddit: 0
+      };
+
+      function animateCount(element) {
+        element.classList.remove('count-bump');
+        void element.offsetWidth; // Trigger reflow
+        element.classList.add('count-bump');
+      }
+
+      function updateCount(url) {
+        let countElement = null;
+
+        if (url.includes('twitter.com') || url.includes('x.com')) {
+          linkCounts.x++;
+          countElement = document.getElementById('x-count');
+          countElement.textContent = linkCounts.x;
+        } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          linkCounts.youtube++;
+          countElement = document.getElementById('youtube-count');
+          countElement.textContent = linkCounts.youtube;
+        } else if (url.includes('bsky.app')) {
+          linkCounts.bsky++;
+          countElement = document.getElementById('bsky-count');
+          countElement.textContent = linkCounts.bsky;
+        } else if (url.includes('tiktok.com')) {
+          linkCounts.tiktok++;
+          countElement = document.getElementById('tiktok-count');
+          countElement.textContent = linkCounts.tiktok;
+        } else if (url.includes('twitch.tv')) {
+          linkCounts.twitch++;
+          countElement = document.getElementById('twitch-count');
+          countElement.textContent = linkCounts.twitch;
+        } else if (url.includes('reddit.com')) {
+          linkCounts.reddit++;
+          countElement = document.getElementById('reddit-count');
+          countElement.textContent = linkCounts.reddit;
+        }
+
+        if (countElement) {
+          animateCount(countElement);
+        }
+      }
+
+      connect();
       startProcessingQueue();
-    });
 
-    connect();
-    startProcessingQueue();
-
-    // Reconnect when the page becomes visible
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && (!ws || ws.readyState === WebSocket.CLOSED)) {
-        connect();
-      }
-    });
-  </script>
+      // Reconnect when the page becomes visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && (!ws || ws.readyState === WebSocket.CLOSED)) {
+          connect();
+        }
+      });
+    </script>
 </body>
 
 </html>
