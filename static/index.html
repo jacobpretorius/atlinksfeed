@@ -15,6 +15,16 @@
       background: #f5f5f5;
     }
 
+    .description {
+      display: flex;
+      justify-content: end;
+      margin-bottom: 2em;
+    }
+
+    .description>* {
+      margin-left: 10px;
+    }
+
     #urlList {
       list-style: none;
       padding: 0;
@@ -75,9 +85,12 @@
 </head>
 
 <body>
-  <h1>10 Seconds of Bluesky Links</h1>
-  <div class="status"
-       id="status">Connecting...</div>
+  <h1>Bluesky Links - Live Feed</h1>
+  <div class="description">
+    <div class="status"
+         id="status">[connecting]</div>
+    <div>made by <a href="https://bsky.app/profile/jacob.earth">@jacob.earth</a></div>
+  </div>
   <ul id="urlList"></ul>
 
   <script>
@@ -95,12 +108,12 @@
       ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        status.textContent = 'Connected';
+        status.textContent = '[connected]';
         reconnectAttempts = 0;
       };
 
       ws.onclose = () => {
-        status.textContent = 'Disconnected';
+        status.textContent = '[disconnected]';
         if (reconnectAttempts < maxReconnectAttempts) {
           setTimeout(() => {
             reconnectAttempts++;
