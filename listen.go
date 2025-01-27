@@ -255,7 +255,7 @@ func main() {
 		}
 	}()
 
-	client := NewWebSocketClient("wss://jetstream2.us-west.bsky.network/subscribe?wantedCollections=app.bsky.feed.post", hub)
+	client := NewWebSocketClient("wss://jetstream1.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post", hub)
 
 	// Setup context with cancellation on interrupt
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
